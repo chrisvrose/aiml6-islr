@@ -20,19 +20,19 @@ from sklearn.model_selection import cross_val_score
 import seaborn as sbn
 from sklearn.linear_model import LogisticRegression
 
-data=pd.read_csv('cnn files/train.csv',low_memory=False)
+data=pd.read_csv('files/train.csv',low_memory=False)
 data.head()
 
-test=pd.read_csv('cnn files/test.csv',low_memory=False)
+test=pd.read_csv('files/test.csv',low_memory=False)
 test.head()
 
-x=data.iloc[:,0:180]
+x=data.iloc[:,0:-1]
 y=data.iloc[:,-1]
 
 le=LabelEncoder()
 y=le.fit_transform(y)
 
-x_test=test.iloc[:,0:180]
+x_test=test.iloc[:,0:-1]
 y_test=test.iloc[:,-1]
 
 y_test=le.fit_transform(y_test)
