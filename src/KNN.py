@@ -17,6 +17,7 @@ test.head()
 x=data.iloc[:,0:-1]
 y=data.iloc[:,-1]
 
+# load saved classes
 le=LabelEncoder()
 le.classes_ = np.load('files/classes.npy')
 y=le.transform(y)
