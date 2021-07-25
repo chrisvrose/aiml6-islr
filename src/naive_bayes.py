@@ -33,9 +33,9 @@ le.classes_ = np.load('files/classes.npy')
 y=le.transform(y)
 
 GaussNB=GaussianNB()
-print("Naive Bayes Started!")
+# print("Naive Bayes Started!")
 GaussNB.fit(x,y)
-print("Naive Bayes Finished !")
+print("GNB")
 
 test=pd.read_csv('files/test.csv',low_memory=False)
 
@@ -54,9 +54,9 @@ y_pred=GaussNB.predict(x_test)
 print(accuracy_score(y_expect,y_pred))
 
 MultiNB=MultinomialNB()
-print("Naive Bayes Started!")
+# print("Naive Bayes Started!")
 MultiNB.fit(x,y)
-print("Naive Bayes Finished !")
+print("MNB")
 
 y_expect=y_test
 y_pred=MultiNB.predict(x_test)
@@ -64,12 +64,19 @@ y_pred=MultiNB.predict(x_test)
 print(accuracy_score(y_expect,y_pred))
 
 BernNB=BernoulliNB(binarize=True)
-print("Naive Bayes Started!")
+# print("Naive Bayes Started!")
 BernNB.fit(x,y)
-print("Naive Bayes Finished !")
+print("BNB")
 
 y_expect=y_test
 y_pred=BernNB.predict(x_test)
+
+import pickle
+file_name='Saved/nbc/nbc.pkl'
+outfile=open(file_name,'wb')
+pickle.dump(BernNB,outfile)
+outfile.close()
+
 
 print(accuracy_score(y_expect,y_pred))
 
@@ -78,9 +85,9 @@ c_m=confusion_matrix(y_test,y_pred)
 df_cm=pd.DataFrame(c_m)
 
 plt.figure(figsize=(20,17))
-plt.title("Confusion Matrix for Gaussian Naive Bayes")
-sbn.heatmap(df_cm,annot=True)
+plt.title("Confusion Matrix for Bernoulli's Naive Bayes")
+sbn.heatmap(df_cm,annot=True,)
 
 from sklearn.metrics import classification_report
 print(classification_report(y_test,y_pred))
-
+plt.show();

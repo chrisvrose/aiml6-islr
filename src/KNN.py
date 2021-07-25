@@ -28,9 +28,11 @@ y_test=test.iloc[:,-1]
 y_test=le.transform(y_test)
 
 # Choosing a K value
+start_range:int =3
+use:int = 7
 outer_range:int = 20
 accuracy_rate=[]
-for i in range(1,outer_range):
+for i in range(3,outer_range,2):
   print('For i=',i)
   knn=KNeighborsClassifier(n_neighbors=i)
   score=cross_val_score(knn,x,y,cv=10)
@@ -39,15 +41,22 @@ for i in range(1,outer_range):
 # Plotting accuracy with different values of k
 
 plt.figure(figsize=(10,6))
-plt.plot(range(1,outer_range),accuracy_rate,color='blue',linestyle='dashed',marker='o',markerfacecolor='red',markersize=10)
+plt.plot(range(start_range,outer_range,2),accuracy_rate,color='blue',linestyle='dashed',marker='o',markerfacecolor='red',markersize=10)
 plt.title("Accuracy_score vs K value")
 plt.show()
 
 
 print('Running for 3NN')
-knn=KNeighborsClassifier(n_neighbors=3)
+knn=KNeighborsClassifier(n_neighbors=use)
 
 knn.fit(x,y)
+
+
+import pickle
+file_name='Saved/knn/knn.pkl'
+outfile=open(file_name,'wb')
+pickle.dump(knn,outfile)
+outfile.close()
 
 y_pred=knn.predict(x_test)
 
@@ -60,5 +69,5 @@ print(classification_report(y_test,y_pred))
 plt.figure(figsize=(20,17))
 plt.title("Confusion Matrix for K Nearest Neighbour")
 df_cm=pd.DataFrame(c_m)
-sbn.heatmap(df_cm,annot=True)
+sbn.heatmap(df_cm,annot=True);plt.show()
 
