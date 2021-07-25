@@ -68,8 +68,9 @@ with open(loc,'w',newline='') as file:
       writer.writerow(list)
 
 
+# pickle the kmeans
+np.save('files/clusters.npy',kmeans.cluster_centers_)
 # for test
-
 
 test_folder='data/split/test'
 

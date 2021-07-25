@@ -61,8 +61,8 @@ outfile.close()
 
 c_m=confusion_matrix(y_test,y_pred)
 
-plt.figure(figsize=(24,22))
-plt.title("Confusion Matrix for K Nearest Neighbour")
+plt.figure(figsize=(40,24))
+plt.title("Confusion Matrix for SVM")
 df_cm=pd.DataFrame(c_m)
 sbn.heatmap(df_cm,annot=True);plt.show();
 

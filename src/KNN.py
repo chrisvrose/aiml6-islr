@@ -43,7 +43,9 @@ plt.plot(range(1,outer_range),accuracy_rate,color='blue',linestyle='dashed',mark
 plt.title("Accuracy_score vs K value")
 plt.show()
 
-knn=KNeighborsClassifier(n_neighbors=1)
+
+print('Running for 3NN')
+knn=KNeighborsClassifier(n_neighbors=3)
 
 knn.fit(x,y)
 

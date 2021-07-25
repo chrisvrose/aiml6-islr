@@ -18,7 +18,7 @@ for label in os.listdir(folder):
     print(label, " started")
     path = folder+'/'+label
     for imgname in os.listdir(path):
-        if not imgname.endswith('.jpg'):
+        if not (imgname.endswith('.jpg') or imgname.endswith('.jpeg')):
             continue;
         img = cv2.imread(path+'/'+imgname)
         # by shadowing we drop the older variable

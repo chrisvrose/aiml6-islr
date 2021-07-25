@@ -38,7 +38,7 @@ def cd_main():
 
 
     aWeight=0.5
-    cam=cv2.VideoCapture(0)
+    cam=cv2.VideoCapture(2)
     #t,r,b,l=100,350,228,478
     t,r,b,l=100,350,325,575
     num_frames=0
@@ -46,15 +46,9 @@ def cd_main():
     cur_mode=None
     count=0
     limit=500
-    method=1
+    method=2
 
-    #print("Enter the method: (1 for keeping bg still and 2 for skin extraction")
-    #method=int(input())
-    option=messagebox.askquestion('Select option','Choose default method ?')
-    if option=='yes':
-        method=2
-    else:
-        method=1
+    
 
     if method==2:
         cv2.namedWindow('Tracking', cv2.WINDOW_NORMAL)
@@ -76,68 +70,37 @@ def cd_main():
             # height,width=frame.shape[:2]
             roi=frame[t:b,r:l]
 
-            if method ==1:
-                gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-                gray = cv2.GaussianBlur(gray, (7, 7), 0)
+            
+            # hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+            # lh = cv2.getTrackbarPos("LH", "Tracking")
+            # ls = cv2.getTrackbarPos("LS", "Tracking")
+            # lv = cv2.getTrackbarPos("LV", "Tracking")
+            # uh = cv2.getTrackbarPos("UH", "Tracking")
+            # us = cv2.getTrackbarPos("US", "Tracking")
+            # uv = cv2.getTrackbarPos("UV", "Tracking")
+            res = roi
+            # l_b = np.array([lh, ls, lv])
+            # u_b = np.array([uh, us, uv])
 
-                if(num_frames<30):
-                    run_avg(gray,aWeight)
-                    cv2.putText(clone, "Keep the Camera still.", (10, 100), cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 0, 0))
-                else:
-                    cv2.putText(clone, "Press esc to exit.", (10, 200), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
-                    cv2.putText(clone, "Keep the Camera still.", (10, 50), cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 0, 0))
-                    cv2.putText(clone, "Put your hand in the rectangle", (10, 100), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
-                    cv2.putText(clone, "Press the key of the sample", (10, 150), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
+            cv2.putText(clone, "Put your hand in the rectangle", (10, 50), cv2.FONT_HERSHEY_COMPLEX, 0.5,(0, 0, 0))
+            cv2.putText(clone, "Adjust the values using trackbar", (10, 100), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
+            cv2.putText(clone, "Press the key of the sample", (10, 150), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
+            cv2.putText(clone, "Press esc to exit.", (10, 200), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
 
-                    hand=extract_hand(gray)
-                    if hand is not None:
-                        thresh, max_cont = hand
-                        mask = cv2.drawContours(clone, [max_cont + (r, t)], -1, (0, 0, 255))
-                        cv2.imshow("Threshold", thresh)
-                        mask = np.zeros(thresh.shape, dtype="uint8")
-                        cv2.drawContours(mask, [max_cont], -1, 255, -1)
-                        mask = cv2.medianBlur(mask, 5)
-                        mask = cv2.addWeighted(mask, 0.5, mask, 0.5, 0.0)
-                        kernel = np.ones((5, 5), np.uint8)
-                        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-                        res = cv2.bitwise_and(roi, roi, mask=mask)
-                        res = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
-                        cv2.imshow("Extracted", res)
-                        high_thresh, thresh_im = cv2.threshold(res, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-                        lowThresh = 0.5 * high_thresh
-                        res = cv2.Canny(res, lowThresh, high_thresh)
+            # mask = cv2.inRange(hsv, l_b, u_b)
+            # cv2.imshow('mask', mask)
+            # mask = cv2.bitwise_not(mask)
+            # mask = cv2.medianBlur(mask, 5)
+            # mask = cv2.addWeighted(mask, 0.5, mask, 0.5, 0.0)
+            # kernel = np.ones((5, 5), np.uint8)
+            # mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-            if method==2:
-                hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-                lh = cv2.getTrackbarPos("LH", "Tracking")
-                ls = cv2.getTrackbarPos("LS", "Tracking")
-                lv = cv2.getTrackbarPos("LV", "Tracking")
-                uh = cv2.getTrackbarPos("UH", "Tracking")
-                us = cv2.getTrackbarPos("US", "Tracking")
-                uv = cv2.getTrackbarPos("UV", "Tracking")
-
-                l_b = np.array([lh, ls, lv])
-                u_b = np.array([uh, us, uv])
-
-                cv2.putText(clone, "Put your hand in the rectangle", (10, 50), cv2.FONT_HERSHEY_COMPLEX, 0.5,(0, 0, 0))
-                cv2.putText(clone, "Adjust the values using trackbar", (10, 100), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
-                cv2.putText(clone, "Press the key of the sample", (10, 150), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
-                cv2.putText(clone, "Press esc to exit.", (10, 200), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
-
-                mask = cv2.inRange(hsv, l_b, u_b)
-                cv2.imshow('mask', mask)
-                mask = cv2.bitwise_not(mask)
-                mask = cv2.medianBlur(mask, 5)
-                mask = cv2.addWeighted(mask, 0.5, mask, 0.5, 0.0)
-                kernel = np.ones((5, 5), np.uint8)
-                mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-
-                res = cv2.bitwise_and(roi, roi, mask=mask)
-                res=cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
-                cv2.imshow('res', res)
-                high_thresh, thresh_im = cv2.threshold(res, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-                lowThresh = 0.5 * high_thresh
-                res = cv2.Canny(res, lowThresh, high_thresh)
+            # res = cv2.bitwise_and(roi, roi, mask=mask)
+            # res=cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
+            # cv2.imshow('res', res)
+            # high_thresh, thresh_im = cv2.threshold(res, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            # lowThresh = 0.5 * high_thresh
+            # res = cv2.Canny(res, lowThresh, high_thresh)
 
 
 
@@ -150,11 +113,11 @@ def cd_main():
 
 
             if cur_mode!=-1 and cur_mode!=255 and cur_mode is not None:
-                file_path = 'Saved Dataset\\'+str(chr(cur_mode))
+                file_path = 'Custom/'+str(chr(cur_mode))
                 if not path.exists(file_path):
                     os.makedirs(file_path)
                 if(count<=limit):
-                    cv2.imwrite(file_path+'\\'+str(count)+'.jpg',res)
+                    cv2.imwrite(file_path+'/'+str(count)+'.jpg',res)
                     print(count)
                     if(count==limit):
                         print("Completed")
