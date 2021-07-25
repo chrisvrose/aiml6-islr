@@ -51,7 +51,8 @@ kmeans.cluster_centers_ = np.load('files/clusters.npy')
 # test_images=load_images_by_category('data/split/test')
 camera = cv2.VideoCapture(2)
 
-k,img = camera.read()#cv2.imread('test.jpg')
+# k,img = camera.read()
+k=1;img = cv2.imread('20210725_225733.jpg')
 if not k:
   exit(0)
 img = skd.segment(img)
