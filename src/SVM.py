@@ -54,15 +54,15 @@ print(classification_report(y_test,y_pred)) #150
 
 import pickle
 
-file_name='/content/drive/My Drive/Colab Notebooks/ISL Recognition/Saved Files/SVM'
+file_name='Saved/svm/svm.pkl'
 outfile=open(file_name,'wb')
 pickle.dump(cls,outfile)
 outfile.close()
 
 c_m=confusion_matrix(y_test,y_pred)
 
-plt.figure(figsize=(20,17))
+plt.figure(figsize=(24,22))
 plt.title("Confusion Matrix for K Nearest Neighbour")
 df_cm=pd.DataFrame(c_m)
-sbn.heatmap(df_cm,annot=True)
+sbn.heatmap(df_cm,annot=True);plt.show();
 

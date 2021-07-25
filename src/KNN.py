@@ -28,9 +28,10 @@ y_test=test.iloc[:,-1]
 y_test=le.transform(y_test)
 
 # Choosing a K value
-
+outer_range:int = 20
 accuracy_rate=[]
-for i in range(1,20):
+for i in range(1,outer_range):
+  print('For i=',i)
   knn=KNeighborsClassifier(n_neighbors=i)
   score=cross_val_score(knn,x,y,cv=10)
   accuracy_rate.append(score.mean())
@@ -38,7 +39,7 @@ for i in range(1,20):
 # Plotting accuracy with different values of k
 
 plt.figure(figsize=(10,6))
-plt.plot(range(1,20),accuracy_rate,color='blue',linestyle='dashed',marker='o',markerfacecolor='red',markersize=10)
+plt.plot(range(1,outer_range),accuracy_rate,color='blue',linestyle='dashed',marker='o',markerfacecolor='red',markersize=10)
 plt.title("Accuracy_score vs K value")
 plt.show()
 
