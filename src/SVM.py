@@ -26,7 +26,7 @@ data.head()
 test=pd.read_csv('files/test.csv',low_memory=False)
 test.head()
 
-x=data.iloc[:,0:150]
+x=data.iloc[:,0:-1]
 y=data.iloc[:,-1]
 
 # load saved classes
@@ -34,7 +34,7 @@ le=LabelEncoder()
 le.classes_ = np.load('files/classes.npy')
 y=le.transform(y)
 
-x_test=test.iloc[:,0:150]
+x_test=test.iloc[:,0:-1]
 y_test=test.iloc[:,-1]
 
 y_test=le.fit_transform(y_test)

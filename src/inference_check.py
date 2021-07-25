@@ -4,7 +4,13 @@ Generates histogram for testing data using KMeans from them.
 """
 
 # Importing the required libraries
-
+"""
+1. resized/cropped
+2. skin mask
+3. features ext
+4. create a bow
+5. 
+"""
 import numpy as np
 import cv2
 import os
@@ -16,35 +22,85 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.preprocessing import LabelEncoder
 
+from skinDetector import skinDetector;
 
-from miscload import  loadBySurf,create_histogram
+from miscload import loadBySurf,create_histogram
 
+# config
 n_classes=36
 clustering_factor=6
+# skin detector
+skd = skinDetector(1);
 
-test_folder='files/test.csv'
+
+
+# kaze imgdetector
+kaze = cv2.KAZE_create()
+
+# models
+with open('Saved/svm/svm.pkl', 'rb') as f1,open('Saved/nbc/nbc.pkl', 'rb') as f2,open('Saved/knn/knn.pkl','rb') as f3:
+  svm = pickle.load(f1)
+  nbc = pickle.load(f2)
+  knn = pickle.load(f3)
+# km
+kmeans=MiniBatchKMeans(n_clusters=n_classes*clustering_factor)
+kmeans.cluster_centers_ = np.load('files/clusters.npy')
+# test_folder='data/split/test'
 
 # Loading Test images
 # test_images=load_images_by_category('data/split/test')
+camera = cv2.VideoCapture(2)
+
+k,img = camera.read()#cv2.imread('test.jpg')
+if not k:
+  exit(0)
+img = skd.segment(img)
+img = cv2.resize(img, (128, 128));
+kp = kaze.detect(img,None);
+cv2.imshow('0',img)
+cv2.waitKey(1000)
+# compute the descriptors with surf
+kp, desc = kaze.compute(img, kp)
+
+
+raw_words = kmeans.predict(desc.astype(np.float))
+hist = np.array(np.bincount(raw_words,minlength=n_classes*clustering_factor))
+
+# print(kp)
+
+hist = np.reshape(hist,(1,-1))
+
 
 #Extract SURF features from the image
 # surf_test=surf_features(test_images)[1]
-surf_test = loadBySurf(test_folder,n_classes);
-print(len(surf_test['a'][0]))
+# surf_test = loadBySurf(test_folder,n_classes);
+# print(len(surf_test[0]))
 
-kmeans=MiniBatchKMeans(n_clusters=n_classes*clustering_factor)
-kmeans.cluster_centers_ = np.load('files/clusters.npy')
-print('loaded saved kmeans')
+
 
 
 # load saved classes
 le=LabelEncoder()
 le.classes_ = np.load('files/classes.npy')
-print('loaded label encodings')
+# print('loaded label encodings')
 
+import pickle
+res = np.array( svm.predict(hist))
+res = np.append(res,
+  nbc.predict(hist)
+)
+res = np.append(res,
+  knn.predict(hist)
+
+)
+
+res = res.reshape(3,1)
+res2 = le.inverse_transform(res)
+print(res2);
+print(res);
 
 # Create histograms from extracted surf features
-bows_test=create_histogram(surf_test,kmeans,n_classes,clustering_factor)
+# bows_test=create_histogram(surf_test,kmeans,n_classes,clustering_factor)
 
 
 # import csv
