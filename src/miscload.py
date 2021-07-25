@@ -2,8 +2,10 @@ import cv2;
 import os;
 import numpy as np;
 
-
 def loadBySurf(folder:str,n_classes:int):
+  """
+  Load and add surf features
+  """
   features_dict={}
   orb_descriptors_class_by_class={}
   orb_descriptors_list=[]
@@ -38,6 +40,9 @@ def loadBySurf(folder:str,n_classes:int):
   return [orb_descriptors_list,orb_descriptors_class_by_class]
 
 def create_histogram(all_descs,kmeans,n_classes:int,clustering_factor:int):
+  """
+  Create histograms
+  """
   features_dict={}
   for key,value in all_descs.items():
     print(key," Started!")
