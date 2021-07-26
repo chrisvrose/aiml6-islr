@@ -1,0 +1,7 @@
+### test
+POST http://localhost:5000/upload2
+Content-Type: application/json
+
+{
+    "file":"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+}
