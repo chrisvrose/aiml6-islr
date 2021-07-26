@@ -1,4 +1,18 @@
 version: '3.0'
 services: 
-    web:
-        
+    be:
+        build: .
+        ports:
+            - 5000
+        environment: 
+            - FLASK_APP=src/serve
+            - DEBIAN_FRONTEND=noninteractive
+    fe:
+        image: nginx:mainline
+        ports:
+            - 8080:80
+        volumes:
+            - ./routing/nginx.conf:/etc/nginx/nginx.conf
+            - ./fe/out:/app/fe
+        depends_on: 
+            - be

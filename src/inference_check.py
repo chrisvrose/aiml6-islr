@@ -32,6 +32,9 @@ clustering_factor=6
 # skin detector
 skd = skinDetector(1);
 
+# label encoder
+le=LabelEncoder()
+le.classes_ = np.load('files/classes.npy')
 
 
 # kaze imgdetector
@@ -49,60 +52,57 @@ kmeans.cluster_centers_ = np.load('files/clusters.npy')
 
 # Loading Test images
 # test_images=load_images_by_category('data/split/test')
-camera = cv2.VideoCapture(2)
+# camera = cv2.VideoCapture(2)
 
 # k,img = camera.read()
-k=1;img = cv2.imread('20210725_225733.jpg')
-if not k:
-  exit(0)
-img = skd.segment(img)
-img = cv2.resize(img, (128, 128));
-kp = kaze.detect(img,None);
-cv2.imshow('0',img)
-cv2.waitKey(1000)
-# compute the descriptors with surf
-kp, desc = kaze.compute(img, kp)
+def inference(img):
+  # img = 
+  img = skd.segment(img)
+  img = cv2.resize(img, (128, 128));
+  kp = kaze.detect(img,None);
+  # cv2.imshow('0',img)
+  # cv2.waitKey(1000)
+  # compute the descriptors with surf
+  print(kp)
+  kp, desc = kaze.compute(img, kp)
+  if desc is None:
+    return le.inverse_transform([[23],[23],[23]]).tolist()
+  
+  raw_words = kmeans.predict(desc.astype(np.float))
+  hist = np.array(np.bincount(raw_words,minlength=n_classes*clustering_factor))
+
+  # print(kp)
+
+  hist = np.reshape(hist,(1,-1))
 
 
-raw_words = kmeans.predict(desc.astype(np.float))
-hist = np.array(np.bincount(raw_words,minlength=n_classes*clustering_factor))
+  #Extract SURF features from the image
+  # surf_test=surf_features(test_images)[1]
+  # surf_test = loadBySurf(test_folder,n_classes);
+  # print(len(surf_test[0]))
 
-# print(kp)
+  # load saved classes
+  
+  # print('loaded label encodings')
 
-hist = np.reshape(hist,(1,-1))
+  res = np.array( svm.predict(hist))
+  res = np.append(res,
+    nbc.predict(hist)
+  )
+  res = np.append(res,
+    knn.predict(hist)
 
+  )
 
-#Extract SURF features from the image
-# surf_test=surf_features(test_images)[1]
-# surf_test = loadBySurf(test_folder,n_classes);
-# print(len(surf_test[0]))
-
-
-
-
-# load saved classes
-le=LabelEncoder()
-le.classes_ = np.load('files/classes.npy')
-# print('loaded label encodings')
-
-import pickle
-res = np.array( svm.predict(hist))
-res = np.append(res,
-  nbc.predict(hist)
-)
-res = np.append(res,
-  knn.predict(hist)
-
-)
-
-res = res.reshape(3,1)
-res2 = le.inverse_transform(res)
-print(res2);
-print(res);
+  res = res.reshape(3,1)
+  res2 = le.inverse_transform(res)
+  print(res);
+  return res2.tolist();
 
 # Create histograms from extracted surf features
 # bows_test=create_histogram(surf_test,kmeans,n_classes,clustering_factor)
-
+if __name__=='__main__':
+  inference(cv2.imread('20210725_225733.jpg'))
 
 # import csv
 # loc='cnn files/test.csv'
