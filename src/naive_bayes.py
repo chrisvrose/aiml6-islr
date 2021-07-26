@@ -74,7 +74,7 @@ y_pred=BernNB.predict(x_test)
 import pickle
 file_name='Saved/nbc/nbc.pkl'
 outfile=open(file_name,'wb')
-pickle.dump(BernNB,outfile)
+# pickle.dump(BernNB,outfile)
 outfile.close()
 
 
