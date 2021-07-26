@@ -66,7 +66,7 @@ const Home: FC = function Home() {
                             <h2>Upload Image</h2>
                         </Container>
                         <Head>
-                            <title>Create Next App</title>
+                            <title>ISLR</title>
                         </Head>
 
                         <Form onSubmit={onSub}>
